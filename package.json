@@ -1,0 +1,25 @@
+{
+    "name": "forg",
+    "version": "0.1.0",
+    "description": "",
+    "bin": {
+        "forg": "./src/bin/forg.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Rishabh3112002/forg.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Rishabh3112002/forg/issues"
+    },
+    "homepage": "https://github.com/Rishabh3112002/forg#readme",
+    "dependencies": {
+        "commander": "^14.0.2",
+        "mysql2": "^3.17.0",
+        "pg": "^8.18.0",
+        "promises": "^0.2.5"
+    }
+}
