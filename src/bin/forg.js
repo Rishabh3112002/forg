@@ -4,6 +4,7 @@ const {Command} = require('commander');
 const pkg = require('../../package.json');
 
 const init = require('../commands/init');
+const proxyToUv = require('../commands/proxy');
 
 const program = new Command();
 
@@ -19,7 +20,7 @@ program
         const normalized = value.toLowerCase();
 
         if (!allowed.includes(normalized)) {
-            throw new Error(`Invalid database engine: "${value}". Allowed values are: mysql, psql`);
+            program.error(`Invalid database engine: "${value}". Allowed values are: mysql, psql`);
         }
 
         return normalized;
@@ -34,13 +35,15 @@ program
         const anyDbFieldUsed = dbFields.some((field) => opts[field]);
 
         if (!opts.engine && anyDbFieldUsed) {
-            throw new Error('Database options (--db-name, --db-user, etc.) require --database');
+            program.error('Database options (--db-name, --db-user, etc.) require --database');
         }
         if (opts.engine && !opts.dbName) {
-            throw new Error('--db-name is required when using --database');
+            program.error('--db-name is required when using --database');
         }
     })
     .action(init);
+
+program.command('* [args...]').allowUnknownOption(true).action(proxyToUv);
 
 if (process.argv.length <= 2) {
     program.help();

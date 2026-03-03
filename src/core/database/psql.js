@@ -1,8 +1,11 @@
 const {Client} = require('pg');
+const {Command} = require('commander');
 const mysql = require('mysql2/promise');
 const readline = require('readline');
 const os = require('os');
 const {spawnSync} = require('child_process');
+
+const program = new Command();
 
 function checkPsqlInstalled() {
     const result = spawnSync('psql', ['--version'], {
@@ -55,8 +58,7 @@ function promptPassword(query) {
 
 async function createPsqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
     if (!checkPsqlInstalled) {
-        console.error('PostgreSQL (psql) is not installed or not in PATH.');
-        process.exit(1);
+        program.error('PostgreSQL (psql) is not installed or not in PATH.');
     }
     const user = dbUser || process.env.PGUSER || os.userInfo().username || 'postgres';
     const host = dbHost || process.env.PGHOST || 'localhost';
@@ -76,8 +78,7 @@ async function createPsqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
         await client.query(`CREATE DATABASE "${dbName}"`);
         console.log(`Database "${dbName}" created successfully.`);
     } catch (err) {
-        console.error('Database creation failed:', err.message);
-        throw err;
+        program.error(`Database creation failed: ${err}`);
     } finally {
         await client.end();
     }
@@ -85,8 +86,7 @@ async function createPsqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
 
 async function createMysqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
     if (!checkMysqlInstalled) {
-        console.error('MySQL is not installed or not in PATH.');
-        process.exit(1);
+        program.error('MySQL is not installed or not in PATH.');
     }
     const user = dbUser || process.env.MYSQL_USER || 'root';
     const host = dbHost || process.env.MYSQL_HOST || 'localhost';
@@ -100,8 +100,7 @@ async function createMysqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
     });
 
     if (!isRunning) {
-        console.error('MySQL server is not running or credentials are invalid.');
-        process.exit(1);
+        program.error('MySQL server is not running or credentials are invalid.');
     }
 
     let connection;
@@ -116,8 +115,7 @@ async function createMysqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
         await connection.query(`CREATE DATABASE \`${dbName}\``);
         console.log(`MySQL database "${dbName}" created successfully.`);
     } catch (err) {
-        console.error('MySQL database creation failed:', err.message);
-        throw err;
+        program.error(`MySQL database creation failed: ${err}`);
     } finally {
         if (connection) await connection.end();
     }

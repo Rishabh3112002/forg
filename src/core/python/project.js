@@ -1,6 +1,9 @@
 const {spawn} = require('child_process');
+const {Command} = require('commander');
 const path = require('path');
 const fs = require('fs/promises');
+
+const program = new Command();
 
 const {pythonDir} = require('./directory');
 
@@ -17,7 +20,7 @@ function uvInit(projectRoot) {
             if (code === 0) {
                 resolve();
             } else {
-                reject(new Error(`uv init failed with exit code ${code}`));
+                reject(new Error(`forg init failed with exit code ${code}`));
             }
         });
     });
@@ -26,7 +29,7 @@ function uvInit(projectRoot) {
 async function ensureNotExists(dir) {
     try {
         await fs.access(dir);
-        throw new Error(`Project already exists at ${dir}`);
+        program.error(`Project already exists at ${dir}`);
     } catch (err) {
         if (err.code !== 'ENOENT') throw err;
     }
