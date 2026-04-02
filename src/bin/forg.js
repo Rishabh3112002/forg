@@ -2,6 +2,7 @@
 
 const {Command} = require('commander');
 const pkg = require('../../package.json');
+const {execSync} = require('child_process');
 
 const init = require('../commands/init');
 const proxyToUv = require('../commands/proxy');
@@ -14,7 +15,8 @@ program
     .command('init')
     .description('Initialize a new project')
     .argument('<name>', 'Project name')
-    .argument('<lang>', 'Project language. Supported languages: python, node')
+    // TODO: Add functionality later for node.
+    // .argument('<lang>', 'Project language. Supported languages: python, node')
     .option('-e, --engine <type>', 'SQL Framework (mysql, psql)', (value) => {
         const allowed = ['mysql', 'psql'];
         const normalized = value.toLowerCase();
@@ -43,7 +45,32 @@ program
     })
     .action(init);
 
-program.command('* [args...]').allowUnknownOption(true).action(proxyToUv);
+program.command('* [args...]', {hidden: true}).allowUnknownOption(true).action(proxyToUv);
+
+program.addHelpText('after', () => {
+    try {
+        const uvHelp = execSync('uv help', {encoding: 'utf8'});
+        const lines = uvHelp.split('\n');
+
+        let inCommands = false;
+        const uvCommands = [];
+
+        for (const line of lines) {
+            if (/^Commands:/i.test(line)) {
+                inCommands = true;
+                continue;
+            }
+            if (inCommands && /^[A-Z]/.test(line) && !/^\s/.test(line)) break;
+            if (inCommands && /^\s+\S/.test(line) && !/^\s+(init | help)\b/.test(line)) {
+                uvCommands.push(line);
+            }
+        }
+
+        return uvCommands.length ? `${uvCommands.join('\n')}` : '';
+    } catch {
+        return '';
+    }
+});
 
 if (process.argv.length <= 2) {
     program.help();

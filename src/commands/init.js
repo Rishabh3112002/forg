@@ -3,6 +3,7 @@ const {createPsqlDatabase, createMysqlDatabase} = require('../core/database/psql
 
 module.exports = async (name, lang, options) => {
     console.log(`Initializing ${name}...`);
+    lang = 'python';
     const dbEngine = options.engine;
     if (lang.toLowerCase() === 'python') {
         try {
