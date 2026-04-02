@@ -1,10 +1,13 @@
 {
-    "name": "forg",
+    "name": "forg-cli",
     "version": "0.1.0",
-    "description": "",
+    "description": "project setup tool",
     "bin": {
         "forg": "./src/bin/forg.js"
     },
+    "files": [
+        "src/"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/Rishabh3112002/forg.git"
