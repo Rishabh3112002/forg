@@ -17,7 +17,7 @@ if ! command -v uv &> /dev/null; then
 fi
 
 # Install via npm
-npm install -g forg
+npm install -g forg-cli
 
 echo ""
 echo "forg installed successfully. Run 'forg --help' to get started."
