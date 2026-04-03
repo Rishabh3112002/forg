@@ -77,6 +77,7 @@ async function createPsqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
         await client.connect();
         await client.query(`CREATE DATABASE "${dbName}"`);
         console.log(`Database "${dbName}" created successfully.`);
+        return {dbName, dbUser: user, dbHost: host, dbPort: port, dbPassword: password};
     } catch (err) {
         program.error(`Database creation failed: ${err}`);
     } finally {
@@ -114,6 +115,7 @@ async function createMysqlDatabase({engine, dbName, dbUser, dbHost, dbPort}) {
         });
         await connection.query(`CREATE DATABASE \`${dbName}\``);
         console.log(`MySQL database "${dbName}" created successfully.`);
+        return {dbName, dbUser: user, dbHost: host, dbPort: port, dbPassword: password};
     } catch (err) {
         program.error(`MySQL database creation failed: ${err}`);
     } finally {
