@@ -37,11 +37,14 @@ async function ensureNotExists(dir) {
 
 async function createProject({name, lang, cwd}) {
     const root = path.resolve(cwd, name);
+    const projectName = name === '.' ? path.basename(root) : name;
 
-    await ensureNotExists(root);
+    if (name != '.') {
+        await ensureNotExists(root);
+    }
 
     await uvInit(root);
-    const dirStruct = await pythonDir({name, root});
+    const dirStruct = await pythonDir({name: projectName, root});
     await fs.rename(path.join(root, 'main.py'), path.join(dirStruct, 'main.py'));
 }
 
